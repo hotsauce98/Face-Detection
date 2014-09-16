@@ -1,0 +1,51 @@
+To install on UNIX-compatible OS (such as Linux, Mac OS X):
+Installing as plugable module
+
+	1. Copy libfacecrop.so(or libfacecrop.dylib) to /usr/lib and LuxandFaceCrop.h to /usr/include (or to /usr/local/lib and /usr/local/include)
+	2. Go to luxand_facecrop folder and type "phpize && ./configure && make && make install"
+	3. Make sure you have extension=luxand_facecrop.so in your php.ini
+
+
+Compiling luxand_facecrop into PHP
+
+	1. Copy libfacecrop.so(or libfacecrop.dylib) to /usr/lib and LuxandFaceCrop.h to /usr/include (or to /usr/local/lib and /usr/local/include)
+	2. Copy files from luxand_facecrop to $PHP_SOURCE_DIR/ext/luxand_facecrop
+	3. In php source root directory run commands: "rm configure && ./buildconf --force"
+	4. Configure PHP with command "./configure --with-luxand_facecrop"
+	5. Run make && make install
+
+
+
+To install on Windows:
+	1. Get visual studio 2008 (no matter what version - express, pro or others; all should work) and install it
+	2. Get and install windows sdk 6.1
+	3. Get a php 5.3 current snapshot or 5.3 stable release archive (do not extract yet!)
+	4. Create the folder "c:\php-sdk"
+	5. Unpack the binary-tools.zip archive (http://pecl2.php.net/downloads/php-windows-builds/php-libs/) into this directory, there should be one sub-directory called "bin" and one called "script"
+	6. Open the "windows sdk 6.1 cmd shell" (it's available from the start menu group) and execute the following commands in it:
+		setenv /x86 /xp /release
+	7. 
+		cd c:\php-sdk\
+	8.
+		bin\phpsdk_setvars.bat
+	9.
+		bin\phpsdk_buildtree.bat php53dev
+	10. Now extract the snapshot from 3. to C:\php-sdk\php53dev\vc9\x86 with your favourite unpacker (winrar should handle it) so that the following directory gets created: C:\php-sdk\php53dev\vc9\x86\php-5.3XXXXXXX
+	11. Copy facecrop.lib to C:\php-sdk\php53dev\vc9\x86\deps\lib\
+	12. Copy luxand_facecrop directory to C:\php-sdk\php53dev\vc9\x86\php-5.3XXXXXXX\ext\ 
+	13. If you want to build php with apache support copy all from lib and include directories from apache directory to C:\php-sdk\php53dev\vc9\x86\deps\lib\ and C:\php-sdk\php53dev\vc9\x86\deps\include\
+	14. Run in the windows-sdk-shell: 
+		cd C:\php-sdk\php53dev\vc9\x86\php-5.3XXXXXXX
+	15. 	
+		buildconf
+	16. 	
+		configure --help
+	17. Then run configure with options you wish including --with-luxand_facecrop, e.g.
+		configure --enable-apache2-2handler --enable-isapi --enable-cli --with-luxand_facecrop
+	18.
+		nmake
+	19. If you want the resulting php to be zipped, run after this also:
+		nmake snap
+	20. The compiled php supporting facecrop is now under C:\php-sdk\php53dev\vc9\x86\php-5.3XXXXXXX\Release_TS, copy it with facecrop.dll to the desired location (e.g. to C:\Windows\System32\)
+	
+

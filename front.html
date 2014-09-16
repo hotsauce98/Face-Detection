@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>test</title>
+<script src="jquery-1.11.1.js"></script>
+</head>
+<body>
+<div style="text-align:center;">
+	<video id="screenshot-stream" class="videostream" autoplay=""></video>
+	<p><button id="screenshot-button">Capture</button> <button id="screenshot-stop-button">Stop</button></p>
+</div>
+<div style="text-align:center;">
+	<canvas id="screenshot-canvas" style="border:1px solid #cccccc;" width="354" height="199"></canvas>
+    <p><label for="name">Type in your name here:</label>&nbsp;<input type="text" id="name"></p>
+	<p><button id="photo-submit">Submit</button></p>
+    <p><span class="response"></span></p>
+</div>
+<script>
+	var errorCallback = function(e) {
+		console.log('Reeeejected!', e);
+	};
+	$(document).ready(function(){
+	  
+		navigator.getUserMedia = ( navigator.getUserMedia ||
+						   navigator.webkitGetUserMedia ||
+						   navigator.mozGetUserMedia ||
+						   navigator.msGetUserMedia);
+						   
+		// Get handles on the video and canvas elements
+		var video = document.querySelector('video');
+		var canvas = document.querySelector('canvas');
+		// Get a handle on the 2d context of the canvas element
+		var ctx = canvas.getContext('2d');
+		// Define some vars required later
+		var w, h, ratio;
+		var capture = document.querySelector('#screenshot-button');
+		var stop = document.querySelector('#screenshot-stop-button');
+		var submit = document.querySelector('#photo-submit');
+		// Add a listener to wait for the 'loadedmetadata' state so the video's dimensions can be read
+		video.addEventListener('loadedmetadata', function() {
+			// Calculate the ratio of the video's width to height
+			ratio = video.videoWidth / video.videoHeight;
+			// Define the required width as 100 pixels smaller than the actual video's width
+			w = video.videoWidth - 100;
+			// Calculate the height based on the video's width and the ratio
+			h = parseInt(w / ratio, 10);
+			// Set the canvas width and height to the values just calculated
+			canvas.width = w;
+			canvas.height = h;			
+		}, false);
+		
+		capture.addEventListener('click', function(){
+			// Define the size of the rectangle that will be filled (basically the entire element)
+			ctx.fillRect(0, 0, w, h);
+			// Grab the image from the video
+			ctx.drawImage(video, 0, 0, w, h);	
+		});	
+		
+		stop.addEventListener('click', function(){
+			video.pause();
+		});
+		
+		submit.addEventListener('click', function(){
+			var dataUrl = canvas.toDataURL();
+            var username = document.querySelector('#name');
+            if (username.value == '') {
+                username.focus();
+                return false;
+            }
+			$.ajax({
+				type: "POST",
+				url: "function.php",
+				data: {image: dataUrl, username: username.value}
+			}).done(function(response){
+				console.log('it is done' + response);
+                document.querySelector('.response').innerHTML = response;
+			});
+		});
+		
+		if (navigator.getUserMedia) {
+		navigator.getUserMedia (
+				// constraints
+				{
+					video: true
+				},
+				// successCallback
+				function(localMediaStream) {
+					var video = document.querySelector('video');
+					video.src = window.URL.createObjectURL(localMediaStream );
+				
+				// Do something with the video here, e.g. video.play()
+				},
+				// errorCallback
+				function(err) {
+					console.log("The following error occured: " + err);
+				}
+			);
+		} else {
+		console.log("getUserMedia not supported");
+		}
+	});
+</script>
+</body>
+</html>

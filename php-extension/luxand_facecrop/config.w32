@@ -1,0 +1,14 @@
+// $Id: config.w32,v 1.0.0.0 2009/10/19$
+// vim:ft=javascript
+
+ARG_WITH("luxand_facecrop", "luxand_facecrop", "yes");
+
+if (PHP_LUXAND_FACECROP == "yes") {
+	if (CHECK_LIB("facecrop.lib", "luxand_facecrop", PHP_LUXAND_FACECROP)){
+		EXTENSION("luxand_facecrop", "luxand_facecrop.cpp");
+		AC_DEFINE('HAVE_LUXAND_FACECROP', 1, 'Have luxand_facecrop');
+	} else {
+        	WARNING("Luxand FaceCrop support can't be enabled, facecrop.lib is not OK")
+        	PHP_LUXAND_FACECROP = "no"
+	}
+}
